@@ -2,7 +2,7 @@
 
 Simple order list application built with VueJS, Vuex and Vue Router. Application allows to create a new orders, save it with different statuses. Application includes filter the orders by their status.
 
-[Live version available here.](https://)
+[Live version available here.](https://xp10it.github.io/vue-order-app/)
 
 Stack:
 
