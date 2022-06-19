@@ -1,37 +1,41 @@
 <template>
   <main class="home">
     <OrdersHeader class="header" />
-    <div class="invoices-container">
+    <div v-if="appView === 'col'" class="status-wrapper">
+      <OrdersColumn
+          v-for="(colValue, index) in columnStatus"
+          :key="index"
+          :colValue="colValue"
+      />
+    </div>
+    <div v-else class="invoices-container">
       <OrderShort
-        v-for="(item, index) in filteredOrders"
-        :key="item.id"
-        :invoiceItem="item"
-        :index="index"
+          v-for="(item, index) in filteredOrders"
+          :key="item.id"
+          :invoiceItem="item"
+          :index="index"
       />
     </div>
   </main>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
 import OrdersHeader from "../components/OrdersHeader.vue";
+import OrdersColumn from "../components/OrdersColumn.vue";
 import OrderShort from "../components/OrderShort.vue";
+
+import {mapGetters, mapState} from "vuex";
 
 export default {
   name: "Home",
-  props: {},
   components: {
     OrdersHeader,
-    OrderShort,
+    OrdersColumn,
+    OrderShort
   },
   computed: {
-    ...mapGetters(["filteredOrders"]),
-  },
-  methods: {
-    ...mapMutations(["SET_EDIT"]),
-  },
-  created() {
-    this.SET_EDIT({ status: false });
+    ...mapState(["columnStatus", "appView"]),
+    ...mapGetters(["filteredOrders"])
   },
 };
 </script>
@@ -39,19 +43,21 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .home {
-  padding: 50px 150px 50px 220px;
+  padding: 50px 100px 50px 220px;
   height: 100vh;
   width: 100%;
-}
-.invoices-container {
-  height: 90%;
-  overflow-y: scroll;
-  padding-right: 10px;
 }
 .header {
   margin-bottom: 30px;
 }
-
+.status-wrapper {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1050px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 90%;
+}
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -71,6 +77,13 @@ export default {
   }
   .header {
     margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .status-wrapper,
+  .invoices-container {
+    margin-top: 105px;
   }
 }
 

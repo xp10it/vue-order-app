@@ -32,7 +32,7 @@ export default {
   box-sizing: border-box;
 }
 body {
-  background-color: #2b2f4d;
+  background-color: #141624;
   font-family: "Spartan", sans-serif;
   font-size: 0.75rem;
   line-height: 1.25;

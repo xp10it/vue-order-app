@@ -582,7 +582,6 @@ form {
   padding: 0 24px 10px 10px;
   gap: 24px;
   height: 100%;
-  overflow-y: scroll;
   overflow-x: hidden;
 }
 label {

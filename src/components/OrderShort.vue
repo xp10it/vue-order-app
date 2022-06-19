@@ -1,44 +1,17 @@
 <template>
-  <div class="invoice-item" @click="showDetail">
+  <div class="invoice-item" ref="invoiceItem" @click="showDetail">
     <p class="id">#{{ invoiceItem.id }}</p>
-    <p class="due">Due: {{ invoiceItem.invoiceDue }}</p>
-    <p class="name">{{ invoiceItem.clientName }}</p>
-    <p class="price">
-      $ {{ invoiceItem.totalPrice.toLocaleString("en-US") }}
-    </p>
-    <div
-      class="status"
-      :class="[
-        invoiceItem.status === 'Draft'
-          ? 'draft-background'
-          : invoiceItem.status === 'Pending'
-          ? 'pending-background'
-          : 'paid-background',
-      ]"
-    >
-      <div
-        class="status-circle"
-        :class="[
-          invoiceItem.status === 'Draft'
-            ? 'circle-draft'
-            : invoiceItem.status === 'Pending'
-            ? 'circle-pending'
-            : 'circle-paid',
-        ]"
-      ></div>
-      <div
-        class="status-text"
-        :class="[
-          invoiceItem.status === 'Draft'
-            ? 'draft-color'
-            : invoiceItem.status === 'Pending'
-            ? 'pending-color'
-            : 'paid-color',
-        ]"
-      >
-        {{ invoiceItem.status }}
-      </div>
+    <div class="invoice-data">
+      <p class="due"><span>Due:</span> {{ invoiceItem.invoiceDue }}</p>
+      <p class="name">{{ invoiceItem.clientName }}</p>
     </div>
+    <p class="price">
+      $ {{ (invoiceItem.totalPrice).toLocaleString("en-US") }}
+    </p>
+    <Status
+        :colValue="invoiceItem.status"
+        v-if="appView === 'list'"
+    />
     <svg
       color="hsl(252, 94%, 67%)"
       viewBox="0 0 1024 1024"
@@ -52,8 +25,12 @@
 </template>
 
 <script>
+import {mapGetters, mapState} from "vuex";
+import Status from "@/components/Status";
+
 export default {
   name: "OrderShort",
+  components: {Status},
   props: {
     invoiceItem: Object,
     index: Number,
@@ -62,30 +39,47 @@ export default {
     showDetail() {
       this.$router.push({
         name: "InvoiceDetail",
-        params: { id: this.invoiceItem.id, index: this.index },
+        params: {
+          id: this.invoiceItem.id,
+          index: this.filteredOrders.findIndex(
+              order => order.id === this.invoiceItem.id
+          )
+        }
       });
-    },
+    }
+  },
+  computed: {
+    ...mapGetters(["filteredOrders"]),
+    ...mapState(["appView"])
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .invoice-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px 15px 32px;
+  padding: 15px 10px 15px 12px;
   border: 1px solid #1e2139;
   border-radius: 8px;
   background-color: #1e2139;
   color: white;
   transition: border 350ms ease-in-out;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 .invoice-item:hover {
   border: 1px solid #7b5cfa;
+}
+.invoice-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.invoice-item_hidden {
+  order: 1;
+  height: 250px;
 }
 .id {
   flex-basis: 5%;
@@ -105,55 +99,16 @@ export default {
   font-size: 16px;
   font-weight: 700;
   flex-basis: 25%;
+  width: 80px;
 }
-.status {
-  flex-basis: 15%;
-  width: 105px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  border-radius: 6px;
-  font-weight: 700;
-}
-.status-circle {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: white;
-}
-.status-text {
-  font-size: 12px;
-}
-svg {
-  flex-basis: 5%;
-}
-.draft-background {
-  background-color: #292c45;
-}
-.draft-color {
-  color: rgb(224, 228, 251);
-}
-.pending-background {
-  background-color: rgba(255, 145, 0, 0.06);
-}
-.pending-color {
-  color: rgb(255, 145, 0);
-}
-.paid-background {
-  background-color: rgba(51, 215, 160, 0.06);
-}
-.paid-color {
-  color: rgb(51, 215, 160);
-}
-.circle-draft {
-  background-color: rgb(224, 228, 251);
-}
-.circle-pending {
-  background-color: rgb(255, 145, 0);
-}
-.circle-paid {
-  background-color: rgb(51, 215, 160);
+
+@media screen and (max-width: 1300px) {
+  .price {
+    font-size: 13px;
+  }
+  .due span {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 1024px) {
@@ -181,6 +136,7 @@ svg {
     justify-self: start;
     grid-column-start: 1;
     grid-column-end: 2;
+    margin-top: 14px;
   }
   .name {
     justify-self: end;

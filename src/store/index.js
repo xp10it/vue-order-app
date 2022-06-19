@@ -10,6 +10,8 @@ export default new Vuex.Store({
     edit: { status: false, id: null },
     invoices: [...data],
     filter: [],
+    columnStatus: ['Draft', 'Pending', 'Paid'],
+    appView: 'col'
   },
   mutations: {
     SET_MENU_IS_OPEN(state) {
@@ -33,6 +35,9 @@ export default new Vuex.Store({
     INVOICE_UPDATE(state, payload) {
       state.invoices.splice(payload.index, 1, { ...payload.info });
     },
+    SET_APP_VIEW(state, payload) {
+      state.appView = payload;
+    }
   },
   actions: {},
   getters: {
